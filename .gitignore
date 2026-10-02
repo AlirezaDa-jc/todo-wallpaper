@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Application-generated files
+generated/
+config.json
+todos.txt
+
+# Environment/secrets
+.env
+*.secret
+
+# IDE
+.vscode/
+.idea/
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# OS
+Thumbs.db
+Desktop.ini
