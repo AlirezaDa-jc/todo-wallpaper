@@ -1,5 +1,3 @@
-import ctypes
-
 from config import TODO_FILE
 
 
@@ -8,6 +6,11 @@ class TodoManager:
         self.ensure_file()
 
     def ensure_file(self):
+        TODO_FILE.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
         if not TODO_FILE.exists():
             TODO_FILE.write_text(
                 "First task\nSecond task\nThird task\n",
@@ -16,14 +19,19 @@ class TodoManager:
 
     def read(self):
         self.ensure_file()
+
         text = TODO_FILE.read_text(encoding="utf-8")
+
         return [line.strip() for line in text.splitlines() if line.strip()]
 
     def modified_time(self):
         self.ensure_file()
+
         return TODO_FILE.stat().st_mtime
 
     def open_file(self):
+        import ctypes
+
         ctypes.windll.shell32.ShellExecuteW(
             None,
             "open",

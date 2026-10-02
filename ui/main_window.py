@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QMainWindow,
+    QMenu,
     QMessageBox,
     QPushButton,
     QScrollArea,
@@ -248,40 +249,32 @@ class MainWindow(QMainWindow):
 
         self.tray_icon.setToolTip("Todo Wallpaper")
 
-        self.tray_icon.setIcon(
-            QIcon("assets/icon.svg")
-        )
+
+        self.tray_icon.setIcon(QIcon("assets/icon.svg"))
 
         show_action = QAction(
             "Show Todo Wallpaper",
             self,
         )
-
         show_action.triggered.connect(self.show_from_tray)
 
         exit_action = QAction(
             "Exit",
             self,
         )
-
         exit_action.triggered.connect(self.exit_application)
 
-        menu = self.tray_icon.contextMenu()
-
-        if menu is None:
-            from PySide6.QtWidgets import QMenu
-
-            menu = QMenu(self)
+        menu = QMenu(self)
 
         menu.addAction(show_action)
-
         menu.addSeparator()
-
         menu.addAction(exit_action)
 
         self.tray_icon.setContextMenu(menu)
 
         self.tray_icon.activated.connect(self.tray_icon_activated)
+
+        self.tray_icon.show()
 
     def tray_icon_activated(
         self,
@@ -311,7 +304,6 @@ class MainWindow(QMainWindow):
             event.type() == event.Type.WindowStateChange
             and self.isMinimized()
             and self.minimize_to_tray
-            and self.tray_icon
         ):
             QTimer.singleShot(
                 0,
@@ -319,17 +311,10 @@ class MainWindow(QMainWindow):
             )
 
     def hide_to_tray(self):
-        if self.isMinimized():
-            self.hide()
+        if not self.isMinimized():
+            return
 
-            self.tray_icon.show()
-
-            self.tray_icon.showMessage(
-                "Todo Wallpaper",
-                "The application is still running in the system tray.",
-                QSystemTrayIcon.MessageIcon.Information,
-                2000,
-            )
+        self.hide()
 
     def screen_list(self):
         return QApplication.screens()

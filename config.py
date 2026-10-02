@@ -1,9 +1,16 @@
+import os
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
 
-TODO_FILE = BASE_DIR / "todos.txt"
-OUTPUT_DIR = BASE_DIR / "generated"
-CONFIG_FILE = BASE_DIR / "config.json"
+APP_NAME = "TodoWallpaper"
+
+APP_DATA_DIR = (
+    Path(os.environ["APPDATA"])
+    / APP_NAME
+)
+
+TODO_FILE = APP_DATA_DIR / "todos.txt"
+OUTPUT_DIR = APP_DATA_DIR / "generated"
+CONFIG_FILE = APP_DATA_DIR / "config.json"
 
 CHECK_INTERVAL = 500

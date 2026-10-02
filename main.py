@@ -12,8 +12,10 @@ from ui.theme import apply_theme
 def main():
     app = QApplication(sys.argv)
 
-    app.setWindowIcon(QIcon("assets/icon.svg"))
     app.setQuitOnLastWindowClosed(False)
+    app.setWindowIcon(QIcon("assets/icon.svg"))
+    app.setApplicationName("Todo Wallpaper")
+    app.setApplicationDisplayName("Todo Wallpaper")
 
     apply_theme(app)
 
