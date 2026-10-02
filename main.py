@@ -1,5 +1,6 @@
 import sys
 
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
 from core.todo_manager import TodoManager
@@ -10,6 +11,9 @@ from ui.theme import apply_theme
 
 def main():
     app = QApplication(sys.argv)
+
+    app.setWindowIcon(QIcon("assets/icon.svg"))
+    app.setQuitOnLastWindowClosed(False)
 
     apply_theme(app)
 
