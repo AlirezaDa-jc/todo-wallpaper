@@ -2,8 +2,8 @@
 
 A lightweight Windows desktop app that turns a simple `todos.txt` file into a Todo wallpaper and lets you configure wallpapers across multiple monitors.
 
-![Todo Wallpaper](screenshot.png)
-![Todo App_Wallpaper](app_screenshot.jpg)
+![Todo Wallpaper](desktop_screenshot.png)
+![Todo App_Wallpaper](app_screenshot.png)
 
 ## Features
 
