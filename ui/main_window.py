@@ -14,7 +14,6 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QPushButton,
     QScrollArea,
-    QSystemTrayIcon,
     QVBoxLayout,
     QWidget,
 )
@@ -53,14 +52,11 @@ class MainWindow(QMainWindow):
         self.todo_monitor = 0
 
         self.start_with_windows = False
-        self.minimize_to_tray = True
 
         self.last_modified = None
-        self.tray_icon = None
 
         self.load_config()
         self.build_ui()
-        self.setup_tray()
         self.start_watcher()
 
     def load_config(self):
@@ -89,10 +85,6 @@ class MainWindow(QMainWindow):
                 False,
             )
 
-            self.minimize_to_tray = data.get(
-                "minimize_to_tray",
-                True,
-            )
 
         except (
             json.JSONDecodeError,
@@ -101,14 +93,12 @@ class MainWindow(QMainWindow):
             self.todo_monitor = 0
             self.wallpapers = {}
             self.start_with_windows = False
-            self.minimize_to_tray = True
 
     def save_config(self):
         data = {
             "todo_monitor": self.todo_monitor,
             "wallpapers": self.wallpapers,
             "start_with_windows": self.start_with_windows,
-            "minimize_to_tray": self.minimize_to_tray,
         }
 
         CONFIG_FILE.write_text(
@@ -205,13 +195,7 @@ class MainWindow(QMainWindow):
 
         self.startup_checkbox.setChecked(self.start_with_windows)
 
-        self.tray_checkbox = QCheckBox("Minimize to system tray")
-
-        self.tray_checkbox.setChecked(self.minimize_to_tray)
-
         settings_layout.addWidget(self.startup_checkbox)
-
-        settings_layout.addWidget(self.tray_checkbox)
 
         main_layout.addLayout(settings_layout)
 
@@ -240,81 +224,6 @@ class MainWindow(QMainWindow):
         main_layout.addLayout(bottom_layout)
 
         self.refresh_cards()
-
-    def setup_tray(self):
-        if not QSystemTrayIcon.isSystemTrayAvailable():
-            return
-
-        self.tray_icon = QSystemTrayIcon(self)
-
-        self.tray_icon.setToolTip("Todo Wallpaper")
-
-
-        self.tray_icon.setIcon(QIcon("assets/icon.svg"))
-
-        show_action = QAction(
-            "Show Todo Wallpaper",
-            self,
-        )
-        show_action.triggered.connect(self.show_from_tray)
-
-        exit_action = QAction(
-            "Exit",
-            self,
-        )
-        exit_action.triggered.connect(self.exit_application)
-
-        menu = QMenu(self)
-
-        menu.addAction(show_action)
-        menu.addSeparator()
-        menu.addAction(exit_action)
-
-        self.tray_icon.setContextMenu(menu)
-
-        self.tray_icon.activated.connect(self.tray_icon_activated)
-
-        self.tray_icon.show()
-
-    def tray_icon_activated(
-        self,
-        reason,
-    ):
-        if reason in (
-            QSystemTrayIcon.ActivationReason.Trigger,
-            QSystemTrayIcon.ActivationReason.DoubleClick,
-        ):
-            self.show_from_tray()
-
-    def show_from_tray(self):
-        self.showNormal()
-        self.raise_()
-        self.activateWindow()
-
-    def exit_application(self):
-        if self.tray_icon:
-            self.tray_icon.hide()
-
-        QApplication.quit()
-
-    def changeEvent(self, event):
-        super().changeEvent(event)
-
-        if (
-            event.type() == event.Type.WindowStateChange
-            and self.isMinimized()
-            and self.minimize_to_tray
-        ):
-            QTimer.singleShot(
-                0,
-                self.hide_to_tray,
-            )
-
-    def hide_to_tray(self):
-        if not self.isMinimized():
-            return
-
-        self.hide()
 
     def screen_list(self):
         return QApplication.screens()
@@ -366,8 +275,6 @@ class MainWindow(QMainWindow):
             self.status_label.setText("Applying...")
 
             self.start_with_windows = self.startup_checkbox.isChecked()
-
-            self.minimize_to_tray = self.tray_checkbox.isChecked()
 
             set_startup_enabled(self.start_with_windows)
 
